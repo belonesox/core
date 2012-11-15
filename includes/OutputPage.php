@@ -1978,7 +1978,14 @@ class OutputPage extends ContextSource {
 		$this->setRobotPolicy( 'noindex,nofollow' );
 		$this->setArticleRelated( false );
 
+		if ( defined( 'HACL_HALOACL_VERSION' ) ) {
+			// IntraACL -- do not produce "&returnto=Access_Denied" links
+			$hacl = haclfDisableTitlePatch();
+		}
 		$returnto = Title::newFromURL( $wgRequest->getVal( 'title', '' ) );
+		if ( defined( 'HACL_HALOACL_VERSION' ) ) {
+			haclfRestoreTitlePatch( $hacl );
+		}
 		$returntoquery = array();
 		if( $returnto ) {
 			$returntoquery = array( 'returnto' => $returnto->getPrefixedText() );
@@ -2214,7 +2221,9 @@ $templates
 		} else {
 			$titleObj = Title::newFromText( $returnto );
 		}
-		if ( !is_object( $titleObj ) ) {
+/*patch|2011-04-05|IntraACL|start*/
+		if ( !$titleObj instanceof Title || method_exists( $titleObj, 'userCanReadEx' ) && !$titleObj->userCanReadEx() ) {
+/*patch|2011-04-05|IntraACL|end*/
 			$titleObj = Title::newMainPage();
 		}
 
