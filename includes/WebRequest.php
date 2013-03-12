@@ -90,14 +90,14 @@ class WebRequest {
 				// Raw PATH_INFO style
 				$matches = self::extractTitle( $path, "$wgScript/$1" );
 
-				global $wgArticlePath;
-				if( !$matches && $wgArticlePath ) {
-					$matches = self::extractTitle( $path, $wgArticlePath );
-				}
-
 				global $wgActionPaths;
 				if( !$matches && $wgActionPaths ) {
 					$matches = self::extractTitle( $path, $wgActionPaths, 'action' );
+				}
+
+				global $wgArticlePath;
+				if( !$matches && $wgArticlePath ) {
+					$matches = self::extractTitle( $path, $wgArticlePath );
 				}
 
 				global $wgVariantArticlePath, $wgContLang;
