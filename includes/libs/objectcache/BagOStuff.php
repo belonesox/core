@@ -48,6 +48,10 @@ abstract class BagOStuff implements LoggerAwareInterface {
 	/** @var integer */
 	protected $lastError = self::ERR_NONE;
 
+	/** @var string */
+	protected $keyspace = 'local';
+
+
 	/** @var LoggerInterface */
 	protected $logger;
 
@@ -540,4 +544,33 @@ abstract class BagOStuff implements LoggerAwareInterface {
 	protected function isInteger( $value ) {
 		return ( is_int( $value ) || ctype_digit( $value ) );
 	}
+
+	/**
+	 * Make a cache key, scoped to this instance's keyspace.
+	 *
+	 * @since 1.27
+	 * @param string ... Key component (variadic)
+	 * @return string
+	 */
+	public function makeKey() {
+		return $this->makeKeyInternal( $this->keyspace, func_get_args() );
+	}
+
+	/**
+	 * Construct a cache key.
+	 *
+	 * @since 1.27
+	 * @param string $keyspace
+	 * @param array $args
+	 * @return string
+	 */
+	public function makeKeyInternal( $keyspace, $args ) {
+		$key = $keyspace;
+		foreach ( $args as $arg ) {
+			$arg = str_replace( ':', '%3A', $arg );
+			$key = $key . ':' . $arg;
+		}
+		return strtr( $key, ' ', '_' );
+	}
+
 }

@@ -742,5 +742,16 @@ class WANObjectCache {
 		} else {
 			return false;
 		}
+    }
+    
+
+	/**
+	 * @see BagOStuff::makeKey()
+	 * @param string ... Key component
+	 * @return string
+	 * @since 1.27
+	 */
+	public function makeKey() {
+		return call_user_func_array( [ $this->cache, __FUNCTION__ ], func_get_args() );
 	}
 }
