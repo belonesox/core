@@ -222,6 +222,26 @@ class ParserOptions {
 	 */
 	private $redirectTarget = null;
 
+	/**
+	 * Fetch an option, generically
+	 * @since 1.30
+	 * @param string $name Option name
+	 * @return mixed
+	 */
+	public function getOption( $name ) {
+		if ( !array_key_exists( $name, $this->options ) ) {
+			throw new InvalidArgumentException( "Unknown parser option $name" );
+		}
+
+		if ( isset( self::$lazyOptions[$name] ) && $this->options[$name] === null ) {
+			$this->options[$name] = call_user_func( self::$lazyOptions[$name], $this, $name );
+		}
+		if ( !empty( self::$inCacheKey[$name] ) ) {
+			$this->optionUsed( $name );
+		}
+		return $this->options[$name];
+	}
+
 	public function getInterwikiMagic() {
 		return $this->mInterwikiMagic;
 	}
@@ -518,6 +538,16 @@ class ParserOptions {
 
 		return wfSetVar( $this->mUserLang, $x );
 	}
+
+    /**
+	 * Class to use to wrap output from Parser::parse()
+	 * @since 1.30
+	 * @return string|bool
+	 */
+	public function getWrapOutputClass() {
+		return $this->getOption( 'wrapclass' );
+	}
+
 
 	public function setThumbSize( $x ) {
 		return wfSetVar( $this->mThumbSize, $x );

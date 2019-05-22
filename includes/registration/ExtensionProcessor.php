@@ -101,7 +101,8 @@ class ExtensionProcessor implements Processor {
 		'config',
 		'ParserTestFiles',
 		'AutoloadClasses',
-		'manifest_version',
+        'manifest_version',
+        'load_composer_autoloader',
 	);
 
 	/**
@@ -352,5 +353,18 @@ class ExtensionProcessor implements Processor {
 		} else {
 			$array[$name] = $value;
 		}
+    }
+    
+
+    public function getExtraAutoloaderPaths( $dir, array $info ) {
+		$paths = array();
+		if ( isset( $info['load_composer_autoloader'] ) && $info['load_composer_autoloader'] === true ) {
+			$path = "$dir/vendor/autoload.php";
+			if ( file_exists( $path ) ) {
+				$paths[] = $path;
+			}
+		}
+		return $paths;
 	}
+
 }

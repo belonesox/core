@@ -39,5 +39,15 @@ interface Processor {
 	 * @return array Where keys are the name to have a constraint on,
 	 * 		like 'MediaWiki'. Values are a constraint string like "1.26.1".
 	 */
-	public function getRequirements( array $info );
+    public function getRequirements( array $info );
+    
+	/**
+	 * Get the path for additional autoloaders, e.g. the one of Composer.
+	 *
+	 * @param string $dir
+	 * @param array $info
+	 * @return array Containing the paths for autoloader file(s).
+	 * @since 1.27
+	 */
+	public function getExtraAutoloaderPaths( $dir, array $info );
 }
